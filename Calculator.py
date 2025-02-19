@@ -1,4 +1,5 @@
-import speech_recognition as s
+import speech_recognition as sr
+import pyttsx3 as p
 import math
 # Extreact number from text --------------------------------------:
 def extreact_num_from_text(text):
@@ -340,6 +341,7 @@ def next_armstrong(num):
 # Zero Argument function-----------------------:
 def end():
     print("\n-----:Thank you for using Smart Calculator:-----")
+    voicess("Thank you for using Smart Calculator, press enter key to exit")
     input("=>Press enter key to exit: ")
     exit()
 def sorry():
@@ -363,11 +365,50 @@ operactions2={'PLUS':addition,'ADD':addition,'ADDITION':addition,'SUM':addition,
     'PRODUCT':multiplication,'MULTIPLY':multiplication,'MULTIPLICATION':multiplication,'MULTIPLE':multiplication,'MULTIPLIDE':multiplication,
     'DIVIDE':division,'DIVISION':division,'MODULE':modulus,'MODULUS':modulus,'LCM':lcm,'HCF':hcf,'POWER':power,'POW':power,'EXPONENT':power,'LOG':log}
 
+def SpeechToText():
+    r=sr.Recognizer()
+    with sr.Microphone(device_index=1) as source:
+        r.adjust_for_ambient_noise(source)
+        print("\nSay some text:")
+        audio=r.listen(source)
+    try:
+        query=r.recognize_google(audio, language='en-in')
+        print(query)
+    except Exception:
+        print("sorry, I couldn't understand.")
+        return "None"
+    return query
+
+def voicess(str):
+    engine=p.init()
+    engine.setProperty('rate',180)
+    voices=engine.getProperty('voices')
+    engine.setProperty('voice',voices[1].id)
+    engine.say(str)
+    engine.runAndWait()
+
 # Main body--------------------------:
 def main():
-    print("\n-------:WELCOME TO THE SMART CALCULATOR:-------")
+    print("\n-------:WELCOME TO THE SMART CALCULATOR:-------\n")
+    print("=> Keyboard Input Press 1")
+    print("=> Voice Input Press 2")
+    voicess("WELCOME TO THE SMART CALCULATOR, Keyboard Input Press 1 or Voice Input Press 2")
+    n=int(input("=> Press: "))
     while True:
-        text=input("\nEnter some text:\n")
+        try:
+            if n==2 or n==1:
+                match n:
+                    case 1:
+                        text=input("\nEnter some text:\n")
+                    case 2:
+                        text=SpeechToText()
+            else:
+                raise ValueError
+        except ValueError:
+            print("Incorrect choice, please enter 1 or 2")
+            voicess("Incorrect choice, please enter 1 or 2")
+            main()
+        
         for word in text.split(' '):
             if word.upper() in operactions2.keys():
                 try:
